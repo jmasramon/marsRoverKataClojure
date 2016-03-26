@@ -13,7 +13,8 @@
 (def turn-modulo-base 4)
 (def orders #{:f :b :l :r})
 (def movements {:f 1 :b -1 :l -1 :r 1})
-(def grid {:len 10 :hei 10})
+(def grid-size 10)
+(def grid {:len grid-size :hei grid-size})
 
 (def rover-status-atom (atom {:pos {:x 0 :y 0} :orient :N}))
 
@@ -55,12 +56,13 @@
 	@rover-status-atom)
 
 (defn movement-delta [stp]
-	(* 	((get-orient @rover-status-atom) directions) 
+	(* ((get-orient @rover-status-atom) directions) 
 		(stp movements)))
-
+		
 (defn new-pos [fun stp]
-	(+ 	(fun @rover-status-atom) 
-		(movement-delta stp)))
+	(mod (+ 	(fun @rover-status-atom) 
+			(movement-delta stp))
+		grid-size))
 
 (defn set-new-pos [get-fun axis stp]
 	(swap! rover-status-atom assoc-in [:pos axis] 
@@ -92,6 +94,7 @@
 	(println "commands" commands)
 	(doseq [coms commands] (move coms))
 	(get-status))
+
 
 
 

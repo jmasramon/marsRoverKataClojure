@@ -40,7 +40,7 @@
   	(initialize {:pos {:x 0 :y 0} :orient :N})
     (is (= {:pos {:x 0 :y 1} :orient :N} (do-commands '(:f))))
     (initialize {:pos {:x 0 :y 0} :orient :S})
-    (is (= {:pos {:x 0 :y -1} :orient :S} (do-commands '(:f))))))
+    (is (= {:pos {:x 0 :y 9} :orient :S} (do-commands '(:f))))))
 
 (deftest move-backwards
   (testing "Move backwards."
@@ -56,7 +56,7 @@
     (is (= {:pos {:x 0 :y 0} :orient :S} (do-commands '(:l))))
     (is (= {:pos {:x 0 :y 0} :orient :E} (do-commands '(:l))))
     (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:l))))
-    ))
+))
 
 (deftest turn-right
   (testing "Turn right."
@@ -65,9 +65,24 @@
     (is (= {:pos {:x 0 :y 0} :orient :S} (do-commands '(:r))))
     (is (= {:pos {:x 0 :y 0} :orient :W} (do-commands '(:r))))
     (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:r))))
-    ))
+))
 
-  
+(deftest mixed-orders
+	(testing "Mixed string of orders.")
+  	(initialize {:pos {:x 0 :y 0} :orient :N})
+    (is (= {:pos {:x 1 :y 0} :orient :S} (do-commands '(:f :r :f :r :f))))
+    (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:b :l :b :l :b))))
+    (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:f :b :b :f))))
+)  
+
+(deftest wrapping
+	(testing "Wrapping to an spheric planet.")
+	(initialize {:pos {:x 0 :y 0} :orient :N})
+    (is (= {:pos {:x 1 :y 9} :orient :N} (do-commands '(:f :b :r :f :l :b))))
+    (is (= {:pos {:x 9 :y 9} :orient :W} (do-commands '(:l :f :f))))
+)
+
+
 
 
 
