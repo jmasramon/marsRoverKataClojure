@@ -73,6 +73,7 @@
     (is (= {:pos {:x 1 :y 0} :orient :S} (do-commands '(:f :r :f :r :f))))
     (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:b :l :b :l :b))))
     (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:f :b :b :f))))
+    (is (= {:pos {:x 2 :y 2} :orient :N} (do-commands '(:r :f :f :l :f :f))))
 )  
 
 (deftest wrapping
@@ -80,6 +81,12 @@
 	(initialize {:pos {:x 0 :y 0} :orient :N})
     (is (= {:pos {:x 1 :y 9} :orient :N} (do-commands '(:f :b :r :f :l :b))))
     (is (= {:pos {:x 9 :y 9} :orient :W} (do-commands '(:l :f :f))))
+)
+
+(deftest obstacles-in-the-way
+	(testing "Finding obstacles in the way.")
+	(initialize {:pos {:x 0 :y 0} :orient :N})
+    (is (= {:pos {:x 0 :y 2} :orient :E} (do-commands '(:f :f :r :f :f))))
 )
 
 

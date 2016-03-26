@@ -15,6 +15,7 @@
 (def movements {:f 1 :b -1 :l -1 :r 1})
 (def grid-size 10)
 (def grid {:len grid-size :hei grid-size})
+(def obstacles #{{:x 1 :y 2} {:x 2 :y 4} {:x 5 :y 5} {:x 7 :y 2} {:x 9 :y 1}})
 
 (def rover-status-atom (atom {:pos {:x 0 :y 0} :orient :N}))
 
@@ -49,6 +50,7 @@
 (defn initialize [status]
 	(if (check-status status)
 		(do (reset! rover-status-atom status)
+			(println "initial state:" status)
 			"Roger that!")
 		"Rejected that!"))
 
@@ -60,13 +62,33 @@
 		(stp movements)))
 		
 (defn new-pos [fun stp]
-	(mod (+ 	(fun @rover-status-atom) 
+	(mod (+ (fun @rover-status-atom) 
 			(movement-delta stp))
 		grid-size))
 
+(defn other-axis [axis]
+	(if (= :y axis)
+		:x
+		:y))
+
+(defn complete-destination [axis dest]
+	(if (= :x axis) 
+		{:x dest :y (get-y @rover-status-atom)} 
+		{:x (get-x @rover-status-atom) :y dest}))
+
+(defn obstacle-in-destination? [axis dest]
+	(println "complete-destination:" (complete-destination axis dest))
+	(if (contains? obstacles (complete-destination axis dest))
+		(do (println "obstacle found")
+			true)
+		false))
+
 (defn set-new-pos [get-fun axis stp]
-	(swap! rover-status-atom assoc-in [:pos axis] 
-		(new-pos get-fun stp)))
+	(let [dest (new-pos get-fun stp)]
+		(if (obstacle-in-destination? axis dest) 
+			(do (println "obstacle in" axis "=" dest)
+				nil)
+			(swap! rover-status-atom assoc-in [:pos axis] dest))))
 
 (defn new-orientation-index [stp]
 	(mod (+ ((get-orient @rover-status-atom) orientations) 
