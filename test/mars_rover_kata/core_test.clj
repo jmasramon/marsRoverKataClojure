@@ -38,15 +38,36 @@
 (deftest move-forwards
   (testing "Move forwards."
   	(initialize {:pos {:x 0 :y 0} :orient :N})
-    (is (= {:pos {:x 0 :y 1} :orient :N} (do-commands '(:f))))))
+    (is (= {:pos {:x 0 :y 1} :orient :N} (do-commands '(:f))))
+    (initialize {:pos {:x 0 :y 0} :orient :S})
+    (is (= {:pos {:x 0 :y -1} :orient :S} (do-commands '(:f))))))
 
-; (deftest move-backwards
-;   (testing "Move backwards."
-;   	(initialize {:pos {:x 0 :y 1} :orient :N})
-;     (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:b))))))
+(deftest move-backwards
+  (testing "Move backwards."
+  	(initialize {:pos {:x 0 :y 1} :orient :N})
+    (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:b))))
+  	(initialize {:pos {:x 0 :y 1} :orient :S})
+    (is (= {:pos {:x 0 :y 2} :orient :S} (do-commands '(:b))))))
 
+(deftest turn-left
+  (testing "Turn left."
+  	(initialize {:pos {:x 0 :y 0} :orient :N})
+    (is (= {:pos {:x 0 :y 0} :orient :W} (do-commands '(:l))))
+    (is (= {:pos {:x 0 :y 0} :orient :S} (do-commands '(:l))))
+    (is (= {:pos {:x 0 :y 0} :orient :E} (do-commands '(:l))))
+    (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:l))))
+    ))
 
+(deftest turn-right
+  (testing "Turn right."
+  	(initialize {:pos {:x 0 :y 0} :orient :N})
+    (is (= {:pos {:x 0 :y 0} :orient :E} (do-commands '(:r))))
+    (is (= {:pos {:x 0 :y 0} :orient :S} (do-commands '(:r))))
+    (is (= {:pos {:x 0 :y 0} :orient :W} (do-commands '(:r))))
+    (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands '(:r))))
+    ))
 
+  
 
 
 

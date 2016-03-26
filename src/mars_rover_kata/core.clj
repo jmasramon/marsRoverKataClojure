@@ -7,8 +7,12 @@
 
 (foo "Jordi's")
 
-(def orientations #{:N :S :E :W})
+(def orientations {:N 0 :E 1 :S 2 :W 3})
+(def turns [:N :E :S :W])
+(def directions {:N 1 :W -1 :S -1 :E 1})
+(def turn-modulo-base 4)
 (def orders #{:f :b :l :r})
+(def movements {:f 1 :b -1 :l -1 :r 1})
 (def grid {:len 10 :hei 10})
 
 (def rover-status-atom (atom {:pos {:x 0 :y 0} :orient :N}))
@@ -53,18 +57,27 @@
 
 (defn move [stp]
 	(println "stepping" stp)
-	(case (list (:orient @rover-status-atom) stp)
-		'(:N :f) (do
-			(println "Oriented north go f")
-			(swap! rover-status-atom assoc-in [:pos :y] 1))))
-		; (:N :b) (do
-		; 	(println "Oriented north go b")
-		; 	(swap! rover-status-atom assoc-in [:pos :y] 0))))
+	(case  #{(get-orient @rover-status-atom) stp}
+		(#{:N :f} #{:N :b} #{:S :f} #{:S :b}) 
+			(swap! rover-status-atom assoc-in [:pos :y] 
+				(+ (get-y @rover-status-atom) 
+					(* ((:orient @rover-status-atom) directions) 
+						(stp movements))))
+		(#{:E :f} #{:E :b} #{:W :f} #{:W :b}) 
+			(swap! rover-status-atom assoc-in [:pos :x] 
+				(+ (get-x @rover-status-atom) 
+					(* ((:orient @rover-status-atom) directions) 
+						(stp movements))))
+		(#{:N :l} #{:N :r} #{:S :l} #{:S :r} #{:W :l} #{:W :r} #{:E :l} #{:E :r}) 
+			(swap! rover-status-atom assoc-in [:orient] 
+					(get turns (mod (+ ((get-orient @rover-status-atom) orientations) (stp movements)) turn-modulo-base)))
+		))
 
 (defn do-commands [commands]
 	(println "commands" commands)
 	(doseq [coms commands] (move coms))
 	(get-status))
+
 
 
 
