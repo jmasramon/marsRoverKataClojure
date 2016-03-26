@@ -41,36 +41,51 @@
 (defn check-status [status]
 	(if (not (correct-position? (:pos status)))
 		false
-		(if (not (correct-orientation? (:orient status)))
+		(if (not (correct-orientation? (get-orient status)))
 			false
 			true)))
 
 (defn initialize [status]
 	(if (check-status status)
-		(do 
-			(reset! rover-status-atom status)
+		(do (reset! rover-status-atom status)
 			"Roger that!")
 		"Rejected that!"))
 
 (defn get-status []
 	@rover-status-atom)
 
+(defn movement-delta [stp]
+	(* 	((get-orient @rover-status-atom) directions) 
+		(stp movements)))
+
+(defn new-pos [fun stp]
+	(+ 	(fun @rover-status-atom) 
+		(movement-delta stp)))
+
+(defn set-new-pos [get-fun axis stp]
+	(swap! rover-status-atom assoc-in [:pos axis] 
+		(new-pos get-fun stp)))
+
+(defn new-orientation-index [stp]
+	(mod (+ ((get-orient @rover-status-atom) orientations) 
+			(stp movements)) 
+		turn-modulo-base))
+
+(defn new-orientation [stp]
+	(get turns (new-orientation-index stp)))
+
+(defn set-new-orientation [stp]
+	(swap! rover-status-atom assoc-in [:orient] (new-orientation stp)))
+
 (defn move [stp]
 	(println "stepping" stp)
 	(case  #{(get-orient @rover-status-atom) stp}
 		(#{:N :f} #{:N :b} #{:S :f} #{:S :b}) 
-			(swap! rover-status-atom assoc-in [:pos :y] 
-				(+ (get-y @rover-status-atom) 
-					(* ((:orient @rover-status-atom) directions) 
-						(stp movements))))
+			(set-new-pos get-y :y stp)
 		(#{:E :f} #{:E :b} #{:W :f} #{:W :b}) 
-			(swap! rover-status-atom assoc-in [:pos :x] 
-				(+ (get-x @rover-status-atom) 
-					(* ((:orient @rover-status-atom) directions) 
-						(stp movements))))
+			(set-new-pos get-x :x stp)
 		(#{:N :l} #{:N :r} #{:S :l} #{:S :r} #{:W :l} #{:W :r} #{:E :l} #{:E :r}) 
-			(swap! rover-status-atom assoc-in [:orient] 
-					(get turns (mod (+ ((get-orient @rover-status-atom) orientations) (stp movements)) turn-modulo-base)))
+			(set-new-orientation stp)
 		))
 
 (defn do-commands [commands]
