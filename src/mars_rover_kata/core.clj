@@ -1,12 +1,5 @@
 (ns mars-rover-kata.core)
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
-
-(foo "Jordi's")
-
 (def orientations {:N 0 :E 1 :S 2 :W 3})
 (def turns [:N :E :S :W])
 (def directions {:N 1 :W -1 :S -1 :E 1})

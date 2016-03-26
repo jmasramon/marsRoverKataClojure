@@ -2,9 +2,6 @@
   (:require [clojure.test :refer :all]
             [mars-rover-kata.core :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 1 1))))
 
 (deftest correct-position?-test
   (testing "correct-position?"
