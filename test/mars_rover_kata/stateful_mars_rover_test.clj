@@ -1,6 +1,6 @@
-(ns mars-rover-kata.core-test
+(ns mars-rover-kata.stateful-mars-rover-test
   (:require [clojure.test :refer :all]
-            [mars-rover-kata.core :refer :all]))
+            [mars-rover-kata.stateful-mars-rover :refer :all]))
 
 
 (deftest correct-position?-test
@@ -85,6 +85,8 @@
 	(initialize {:pos {:x 0 :y 0} :orient :N})
     (is (= {:pos {:x 0 :y 2} :orient :E} (do-commands '(:f :f :r :f :f))))
 )
+
+
 
 
 

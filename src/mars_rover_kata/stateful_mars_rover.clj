@@ -1,4 +1,4 @@
-(ns mars-rover-kata.core)
+(ns mars-rover-kata.stateful-mars-rover)
 
 (def orientations {:N 0 :E 1 :S 2 :W 3})
 (def turns [:N :E :S :W])
