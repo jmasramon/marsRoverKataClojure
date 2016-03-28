@@ -2,14 +2,6 @@
   (:require [clojure.test :refer :all]
             [mars-rover-kata.stateless-mars-rover :refer :all]))
 
-(deftest correct-orientation?-test
-  (testing "correct-orientation?"
-    (is (correct-orientation? :S))
-    (is (correct-orientation? :N))
-    (is (correct-orientation? :W))
-    (is (correct-orientation? :E))
-    (is (not (correct-orientation? :K)))))
-
 (deftest move-forwards
   (testing "Move forwards."
     (is (= {:pos {:x 0 :y 1} :orient :N} (do-commands {:pos {:x 0 :y 0} :orient :N} '(:f))))
@@ -42,7 +34,7 @@
     (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands {:pos {:x 1 :y 0} :orient :S} '(:b :l :b :l :b))))
     (is (= {:pos {:x 0 :y 0} :orient :N} (do-commands {:pos {:x 0 :y 0} :orient :N} '(:f :b :b :f))))
     (is (= {:pos {:x 2 :y 2} :orient :N} (do-commands {:pos {:x 0 :y 0} :orient :N} '(:r :f :f :l :f :f))))
-)  
+)
 
 (deftest wrapping
 	(testing "Wrapping to an spheric planet.")
